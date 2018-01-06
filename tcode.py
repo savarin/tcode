@@ -1,4 +1,7 @@
 def encode_unit(string):
+    if string is None:
+        return '~\n'
+
     result = ''
     simple = True
 
@@ -8,14 +11,16 @@ def encode_unit(string):
         result += char
     result += '\n'
 
-    if not string:
-        return '~' + result
-    elif simple:
+    if simple:
         return '+' + result
     return str(i + 1) + result
 
 
 def decode_unit(string):
+    if string[0] == '~':
+        assert len(string) == 2
+        return [None, 1]
+
     digits = set([str(i) for i in xrange(10)])
     result = ''
     length = ''
@@ -36,10 +41,7 @@ def decode_unit(string):
 
     assert result[-1] == '\n'
 
-    if result[0] == '~':
-        assert i == 1
-        result = result[1:-1]
-    elif result[0] == '+':
+    if result[0] == '+':
         result = result[1:-1]
     else:
         assert length
