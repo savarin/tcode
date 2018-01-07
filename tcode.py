@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def encode_unit(string):
     if string is None:
         return '~\n'
@@ -53,4 +56,34 @@ def decode_stream(string, offset=0, count=None):
         unit, offset = decode_unit(string, offset)
         result.append(unit)
     
+    return result
+
+
+def encode_list(types, units):
+    result = ''
+    assert len(types) == len(units)
+
+    for i, unit in enumerate(units):
+        if types[i] == 'str':
+            result += encode_unit(unit)
+        elif types[i] == 'int':
+            result += encode_unit(str(unit))
+        elif types[i] == 'date':
+            result += encode_unit(unit.strftime('%Y%m%d'))
+
+    return result
+
+
+def decode_list(types, string, offset=0):
+    result = []
+    stream = decode_stream(string, offset)
+
+    for i, unit in enumerate(stream):
+        if types[i] == 'str':
+            result.append(unit)
+        elif types[i] == 'int':
+            result.append(int(unit))
+        elif types[i] == 'date':
+            result.append(datetime.strptime(unit, '%Y%m%d').strftime('%Y-%m-%d'))
+
     return result
