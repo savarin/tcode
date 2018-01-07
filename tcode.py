@@ -1,4 +1,4 @@
-def encode_unit(string):
+def encode_string(string):
     if string is None:
         return '~\n'
 
@@ -16,36 +16,30 @@ def encode_unit(string):
     return str(i + 1) + result
 
 
-def decode_unit(string):
+def decode_string(string, offset):
+    string = string[offset:]
+    result = ''
+
     if string[0] == '~':
         assert len(string) == 2
-        return [None, 1]
+        return [None, 2]
+
+    elif string[0] == '+':
+        for i, char in enumerate(string[1:]):
+            if char == '\n':
+                return [result, i+2]
+            result += char
 
     digits = set([str(i) for i in xrange(10)])
-    result = ''
     length = ''
-    bulk = False
 
     for i, char in enumerate(string):
-        if not i and char in digits:
-            bulk = True
+        if char in digits:
             length += char
-            continue
-        elif bulk and char in digits:
-            length += char
-            continue
-        elif bulk and char not in digits:
-            bulk = False
+        else:
+            break
+            
+    result = string[i:i+int(length)]
+    assert string[i+int(length)] == '\n'
 
-        result += char
-
-    assert result[-1] == '\n'
-
-    if result[0] == '+':
-        result = result[1:-1]
-    else:
-        assert length
-        assert len(result) == int(length) + 1
-        result = result[:-1]
-
-    return [result, i]
+    return [result, i+int(length)+1]
