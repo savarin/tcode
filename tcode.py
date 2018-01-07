@@ -1,4 +1,4 @@
-def encode_string(string):
+def encode_unit(string):
     if string is None:
         return '~\n'
 
@@ -16,7 +16,7 @@ def encode_string(string):
     return str(i + 1) + result
 
 
-def decode_string(string, offset):
+def decode_unit(string, offset=0):
     string = string[offset:]
     result = ''
 
@@ -27,7 +27,7 @@ def decode_string(string, offset):
     elif string[0] == '+':
         for i, char in enumerate(string[1:]):
             if char == '\n':
-                return [result, i+2]
+                return [result, i+2+offset]
             result += char
 
     digits = set([str(i) for i in xrange(10)])
@@ -38,8 +38,19 @@ def decode_string(string, offset):
             length += char
         else:
             break
-            
+
     result = string[i:i+int(length)]
     assert string[i+int(length)] == '\n'
 
-    return [result, i+int(length)+1]
+    return [result, i+int(length)+1+offset]
+
+
+def decode_stream(string, offset=0, count=None):
+    result = []
+    counter = 0
+
+    while offset < len(string):
+        unit, offset = decode_unit(string, offset)
+        result.append(unit)
+    
+    return result
