@@ -84,6 +84,6 @@ def decode_list(types, string, offset=0):
         elif types[i] == 'int':
             result.append(int(unit))
         elif types[i] == 'date':
-            result.append(datetime.strptime(unit, '%Y%m%d').strftime('%Y-%m-%d'))
+            result.append(datetime.strptime(unit, '%Y%m%d'))
 
     return result
